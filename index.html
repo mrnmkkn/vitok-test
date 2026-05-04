@@ -411,17 +411,18 @@ svg{
 .arcaneOverlay{position:fixed;inset:0;z-index:50;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(0,0,0,.48);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);}
 .arcaneOverlay.isOpen{display:flex}
 .arcaneModal{width:min(100%,460px);max-height:min(86vh,720px);overflow:hidden;border-radius:30px;background:linear-gradient(145deg,rgba(255,255,255,.15),rgba(255,255,255,.055) 48%,rgba(178,171,236,.07)),radial-gradient(circle at 20% 0%,rgba(233,43,105,.28),transparent 38%),radial-gradient(circle at 90% 18%,rgba(178,171,236,.22),transparent 42%),rgba(37,38,43,.86);border:1px solid rgba(255,248,243,.22);box-shadow:0 28px 90px rgba(0,0,0,.46), inset 0 1px 0 rgba(255,255,255,.16);color:var(--ink);}
-.arcaneModalHeader{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;padding:22px 20px 14px;border-bottom:1px solid rgba(255,248,243,.12);}
-.arcaneModalTitle{margin:0;font-family:"Calibri Light",Calibri,Arial,sans-serif;font-size:30px;line-height:1.05;font-weight:300;color:#fff8f3;}
-.arcaneModalSubtitle{margin:7px 0 0;color:rgba(244,215,184,.78);font-size:13px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;}
+.arcaneModalHeader{display:flex;align-items:center;justify-content:flex-end;gap:10px;padding:14px 14px;border-bottom:1px solid rgba(255,248,243,.12);}
+.arcaneModalTitle{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;}
+.arcaneOpenSeparate{flex:0 1 auto;display:inline-flex;align-items:center;justify-content:center;min-height:42px;border-radius:16px;padding:10px 14px;font-family:Calibri,Arial,sans-serif;font-size:14px;font-weight:700;line-height:1;text-decoration:none;color:#fff8f3;background:rgba(255,255,255,.08);border:1px solid rgba(255,248,243,.16);box-shadow:inset 0 1px 0 rgba(255,255,255,.12);}
+.arcaneOpenSeparate:hover{filter:brightness(1.08)}
 .arcaneClose{flex:0 0 auto;width:42px;min-height:42px;border-radius:16px;padding:0;font-size:25px;line-height:1;background:rgba(255,255,255,.08);border:1px solid rgba(255,248,243,.16);box-shadow:inset 0 1px 0 rgba(255,255,255,.12);}
-.arcaneModalBody{padding:0;max-height:calc(min(86vh,720px) - 94px);overflow:hidden;}
+.arcaneModalBody{padding:0;max-height:calc(min(86vh,720px) - 71px);overflow:hidden;}
 .arcaneEmptyState{margin:20px;min-height:240px;display:flex;align-items:center;justify-content:center;text-align:center;border-radius:24px;border:1px dashed rgba(255,248,243,.20);background:rgba(255,255,255,.035);color:rgba(255,248,243,.62);line-height:1.45;}
 .arcaneSourceLink{display:none;margin-top:16px;color:#fff8f3;text-decoration:none;font-weight:700;text-align:center;padding:13px 16px;border-radius:18px;background:rgba(255,255,255,.07);border:1px solid rgba(255,248,243,.16);}
 .arcaneSourceLink.isVisible{display:block}
-.arcaneFrame{display:block;width:100%;height:calc(min(86vh,720px) - 94px);border:0;background:transparent;border-radius:0;}
+.arcaneFrame{display:block;width:100%;height:calc(min(86vh,720px) - 71px);border:0;background:transparent;border-radius:0;}
 body.modalOpen{overflow:hidden}
-@media(max-width:430px){.arcaneOverlay{padding:10px}.arcaneModal{border-radius:26px;max-height:88vh}.arcaneModalTitle{font-size:27px}.arcaneModalHeader,.arcaneModalBody{padding-left:16px;padding-right:16px}}
+@media(max-width:430px){.arcaneOverlay{padding:10px}.arcaneModal{border-radius:26px;max-height:88vh}.arcaneModalHeader{padding:12px}.arcaneOpenSeparate{font-size:13px;padding:10px 12px}.arcaneClose{width:42px}}
 </style></head><body>
 <div class="page">
 <section class="hero"><p class="eyebrow">личная карта пути</p><h1>Метод Витка</h1><p class="lead">Введи дату рождения, чтобы построить карту личности, линии пути, циклов, вызовов и предназначения.</p><div class="controls"><input type="date" id="birth"/><button id="btn">Построить карту</button></div></section>
@@ -433,10 +434,8 @@ body.modalOpen{overflow:hidden}
 <div class="arcaneOverlay" id="arcaneOverlay" aria-hidden="true">
   <div class="arcaneModal" role="dialog" aria-modal="true" aria-labelledby="arcaneModalTitle">
     <div class="arcaneModalHeader">
-      <div>
-        <h2 class="arcaneModalTitle" id="arcaneModalTitle">Аркан</h2>
-        <p class="arcaneModalSubtitle">вершина треугольника личности</p>
-      </div>
+      <h2 class="arcaneModalTitle" id="arcaneModalTitle">Аркан</h2>
+      <a class="arcaneOpenSeparate" id="arcaneOpenSeparate" href="#" target="_blank" rel="noopener">Открыть отдельно</a>
       <button class="arcaneClose" id="arcaneClose" type="button" aria-label="Закрыть окно">×</button>
     </div>
     <div class="arcaneModalBody" id="arcaneModalBody">
@@ -456,9 +455,11 @@ function openArcaneModal(arcaneNumber){
   const overlay = document.getElementById("arcaneOverlay");
   const title = document.getElementById("arcaneModalTitle");
   const body = document.getElementById("arcaneModalBody");
+  const openSeparate = document.getElementById("arcaneOpenSeparate");
   const fileName = `C-top/arcane-${arcaneNumber}.html`;
   title.textContent = `${arcaneNumber} аркан`;
-  body.innerHTML = `<iframe class="arcaneFrame" src="${fileName}" title="Трактовка ${arcaneNumber} аркана"></iframe>`;
+  openSeparate.href = fileName;
+  body.innerHTML = `<iframe class="arcaneFrame" src="${fileName}?view=modal" title="Трактовка ${arcaneNumber} аркана"></iframe>`;
   overlay.classList.add("isOpen");
   overlay.setAttribute("aria-hidden","false");
   document.body.classList.add("modalOpen");
