@@ -1,0 +1,578 @@
+<!DOCTYPE html><html lang="ru"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/><title>Метод Витка — карта пути</title><style>
+:root{
+  --dark:#25262b;
+  --raspberry:#e92b69;
+  --coral:#f86b7d;
+  --cream:#f4d7b8;
+  --lavender:#b2abec;
+  --violet:#9656ce;
+
+  --ink:#fff8f3;
+  --muted:rgba(255,248,243,.74);
+  --soft:rgba(255,248,243,.16);
+  --panel:rgba(255,255,255,.055);
+  --glass:rgba(255,255,255,.075);
+}
+
+*{box-sizing:border-box}
+html{
+  scroll-behavior:smooth;
+  background:#000;
+}
+
+body{
+  margin:0;
+  background-color:#000;
+  min-height:100vh;
+  color:var(--ink);
+  font-family:"Calibri Light", Calibri, Arial, sans-serif;
+  background:
+    radial-gradient(circle at 18% 6%, rgba(233,43,105,.46) 0 8%, transparent 28%),
+    radial-gradient(circle at 84% 12%, rgba(178,171,236,.40) 0 10%, transparent 32%),
+    radial-gradient(circle at 50% 48%, rgba(248,107,125,.18) 0 18%, transparent 56%),
+    radial-gradient(circle at 20% 88%, rgba(150,86,206,.35) 0 12%, transparent 40%),
+    linear-gradient(145deg,#25262b 0%,#302c3d 44%,#4e315f 100%);
+  padding:18px 12px 36px;
+}
+
+body:before{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  background:
+    radial-gradient(circle at 50% -10%, rgba(244,215,184,.18), transparent 32%),
+    linear-gradient(180deg, rgba(255,255,255,.04), transparent 26%, rgba(0,0,0,.10));
+  mix-blend-mode:screen;
+  opacity:.72;
+}
+
+.page{
+  width:min(100%,480px);
+  margin:0 auto;
+  position:relative;
+  z-index:1;
+}
+
+.hero,.info,.chartShell,.cta{
+  position:relative;
+  overflow:hidden;
+  border-radius:30px;
+  background:
+    linear-gradient(145deg,rgba(255,255,255,.13),rgba(255,255,255,.045) 48%,rgba(178,171,236,.055)),
+    rgba(255,255,255,.035);
+  backdrop-filter:blur(18px) saturate(1.15);
+  -webkit-backdrop-filter:blur(18px) saturate(1.15);
+  border:1px solid rgba(255,248,243,.18);
+  box-shadow:0 24px 70px rgba(0,0,0,.18), inset 0 1px 0 rgba(255,255,255,.16), inset 0 -1px 0 rgba(178,171,236,.08);
+}
+
+.hero{
+  padding:28px 20px 22px;
+  margin-bottom:14px;
+}
+
+.hero:before,.info:before,.cta:before{
+  content:"";
+  position:absolute;
+  inset:1px;
+  border-radius:29px;
+  pointer-events:none;
+  background:linear-gradient(135deg,rgba(255,255,255,.16),transparent 34%,rgba(178,171,236,.07) 78%,transparent);
+  opacity:.52;
+}
+.hero:after,.chartCard:before{display:none}
+
+.eyebrow{
+  margin:0 0 12px;
+  color:rgba(244,215,184,.86);
+  font-family:Calibri,Arial,sans-serif;
+  font-size:11px;
+  letter-spacing:.30em;
+  text-transform:uppercase;
+  font-weight:700;
+}
+
+h1{
+  font-family:"Calibri Light",Calibri,Arial,sans-serif;
+  margin:0 0 10px;
+  font-size:48px;
+  font-weight:300;
+  line-height:.95;
+  letter-spacing:.01em;
+  color:#fff8f3;
+  text-shadow:0 14px 40px rgba(233,43,105,.22);
+}
+
+.lead{
+  margin:0 0 20px;
+  color:var(--muted);
+  line-height:1.45;
+  font-size:16px;
+}
+
+.controls{
+  display:grid;
+  gap:10px;
+  min-width:0;
+}
+
+input[type="date"]{
+  -webkit-appearance:none;
+  appearance:none;
+  line-height:1.2;
+
+  display:block;
+  width:100%;
+  max-width:100%;
+  min-width:0;
+  min-height:54px;
+  color:var(--ink);
+  color-scheme:dark;
+  background:rgba(255,255,255,.075);
+  border:1px solid rgba(255,248,243,.18);
+  border-radius:20px;
+  padding:14px 16px;
+  font-family:Calibri,Arial,sans-serif;
+  font-size:17px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.10);
+  outline:none;
+}
+
+button,.linkButton{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:100%;
+  min-height:54px;
+  border:none;
+  border-radius:20px;
+  padding:14px 18px;
+  font-family:Calibri,Arial,sans-serif;
+  font-size:17px;
+  font-weight:700;
+  text-decoration:none;
+  cursor:pointer;
+  color:#fff8f3;
+  background:
+    linear-gradient(135deg,rgba(233,43,105,.96),rgba(248,107,125,.88) 48%,rgba(150,86,206,.84));
+  box-shadow:0 18px 42px rgba(233,43,105,.25), inset 0 1px 0 rgba(255,255,255,.26);
+}
+
+button:hover,.linkButton:hover{filter:brightness(1.04)}
+
+.info{
+  padding:15px;
+  margin-bottom:14px;
+}
+
+details{
+  border-radius:24px;
+  background:rgba(255,255,255,.045);
+  border:1px solid rgba(255,248,243,.13);
+  padding:14px;
+}
+
+summary{
+  cursor:pointer;
+  color:#fff8f3;
+  font-family:Calibri,Arial,sans-serif;
+  font-weight:700;
+  list-style:none;
+}
+summary::-webkit-details-marker{display:none}
+
+.grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-top:12px;
+}
+
+.item{
+  padding:13px;
+  min-height:104px;
+  border-radius:22px;
+  background:rgba(255,255,255,.045);
+  border:1px solid rgba(255,248,243,.105);
+}
+
+.item b{
+  display:block;
+  margin-bottom:7px;
+  color:#fff8f3;
+  font-family:Calibri,Arial,sans-serif;
+  font-size:14px;
+  font-weight:700;
+}
+
+.item span,.cta p{
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.42;
+}
+
+.chartShell{
+  padding:8px;
+  margin-bottom:14px;
+}
+
+.chartCard{
+  position:relative;
+  border-radius:28px;
+  overflow:hidden;
+  border:1px solid rgba(244,215,184,.18);
+  background:
+    radial-gradient(circle at 50% 18%, rgba(244,215,184,.13) 0 9%, transparent 36%),
+    radial-gradient(circle at 28% 32%, rgba(233,43,105,.15) 0 12%, transparent 44%),
+    radial-gradient(circle at 78% 62%, rgba(178,171,236,.13) 0 12%, transparent 44%),
+    radial-gradient(circle at 50% 106%, rgba(150,86,206,.22) 0 10%, transparent 38%),
+    linear-gradient(160deg,#24262b 0%,#2d2d39 42%,#433450 100%);
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.055),
+    inset 0 32px 90px rgba(255,255,255,.035),
+    inset 0 -40px 90px rgba(0,0,0,.16),
+    0 26px 80px rgba(0,0,0,.26);
+}
+
+.chartCard:after{
+  content:"";
+  position:absolute;
+  inset:-20px;
+  pointer-events:none;
+  background:
+    radial-gradient(circle, rgba(244,215,184,.32) 0 .8px, transparent 1.4px),
+    radial-gradient(circle, rgba(178,171,236,.20) 0 .7px, transparent 1.3px);
+  background-size:94px 94px,67px 67px;
+  background-position:18px 12px,46px 48px;
+  opacity:.13;
+  mask-image:radial-gradient(circle at 50% 48%, black 0 52%, transparent 88%);
+}
+
+svg{
+  width:100%;
+  height:720px;
+  display:block;
+  position:relative;
+  z-index:1;
+  overflow:visible;
+  background:
+    radial-gradient(circle at 50% 30%, rgba(244,215,184,.045), transparent 34%),
+    radial-gradient(circle at 40% 56%, rgba(233,43,105,.045), transparent 28%),
+    transparent;
+}
+
+.hint{
+  text-align:center;
+  padding:10px 8px 3px;
+  color:rgba(255,248,243,.62);
+  font-size:12px;
+}
+
+.cta{
+  padding:20px;
+  margin-bottom:12px;
+}
+
+.cta h2{
+  font-family:"Calibri Light",Calibri,Arial,sans-serif;
+  font-size:30px;
+  font-weight:300;
+  margin:0 0 8px;
+  color:#fff8f3;
+}
+
+.cta p{margin:0 0 14px}
+
+.fine{
+  text-align:center;
+  color:rgba(255,248,243,.50);
+  font-size:12px;
+  line-height:1.4;
+  padding:4px 10px 0;
+}
+
+/* SVG: единая орнаментальная графика */
+.vitokSpiral{
+  fill:none;
+  stroke:rgba(244,215,184,.075);
+  stroke-width:.9;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  filter:none;
+}
+.vitokSpiralSoft{
+  fill:none;
+  stroke:rgba(255,248,243,.045);
+  stroke-width:.7;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  stroke-dasharray:1 12;
+}
+.vitokSpark{fill:rgba(244,215,184,.22)}
+.star{fill:rgba(244,215,184,.54)}
+.bgVeil{
+  fill:none;
+  stroke:rgba(255,248,243,.038);
+  stroke-width:.8;
+  stroke-dasharray:1.5 12;
+  stroke-linecap:round;
+}
+.bgGlowCircle{
+  fill:rgba(255,248,243,.010);
+  stroke:rgba(244,215,184,.040);
+  stroke-width:.9;
+}
+.arc,.arc.soft,.sep,.pathLine,.destinyLine{
+  fill:none;
+  stroke:rgba(244,215,184,.33);
+  stroke-width:1;
+  stroke-dasharray:1.4 7.5;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  filter:none;
+}
+.arc.soft{stroke:rgba(178,171,236,.30)}
+.pathLine{stroke:rgba(244,215,184,.24)}
+.destinyLine{stroke:rgba(248,107,125,.44);stroke-width:1.05}
+
+.num,.dateDigit,.dateDot{
+  font-family:Calibri,Arial,sans-serif;
+  font-variant-numeric:tabular-nums lining-nums;
+  font-feature-settings:"tnum" 1,"lnum" 1;
+  font-size:22px;
+  text-anchor:middle;
+  dominant-baseline:middle;
+  font-weight:700;
+  fill:#fff8f3;
+  text-shadow:0 0 12px rgba(37,38,43,.62),0 2px 8px rgba(37,38,43,.50);
+}
+.num.small{font-size:20px}
+.dateDigit,.dateDot{fill:#f4d7b8}
+
+.portraitHalo,.cycleCircle,.destinyCircle{
+  fill:rgba(255,248,243,.035);
+  stroke:rgba(244,215,184,.24);
+  stroke-width:1.25;
+}
+.destinyCircle{
+  fill:rgba(248,107,125,.065);
+  stroke:rgba(248,107,125,.52);
+  filter:drop-shadow(0 0 10px rgba(248,107,125,.14));
+}
+.destinyHalo{
+  fill:rgba(248,107,125,.035);
+  stroke:rgba(248,107,125,.12);
+  stroke-width:1;
+}
+.dateChip{
+  fill:rgba(255,248,243,.035);
+  stroke:rgba(244,215,184,.22);
+  stroke-width:1.05;
+  filter:none;
+}
+.ageText{
+  font-family:Calibri,Arial,sans-serif;
+  font-size:13px;
+  text-anchor:middle;
+  dominant-baseline:middle;
+  fill:rgba(255,248,243,.58);
+  font-weight:700;
+}
+.challengeSquare{
+  fill:rgba(255,248,243,.028);
+  stroke:rgba(178,171,236,.30);
+  stroke-width:1.25;
+  rx:10;
+}
+
+@media(max-width:430px){
+  body{padding:12px 8px 28px}
+  .page{width:100%}
+  .hero{padding:24px 16px 18px}
+  h1{font-size:44px}
+  .chartShell{padding:6px}
+  .chartCard{border-radius:26px}
+  svg{height:740px}
+}
+@media(max-width:390px){
+  h1{font-size:40px}
+  .grid{grid-template-columns:1fr}
+  svg{height:700px}
+}
+</style></head><body>
+<div class="page">
+<section class="hero"><p class="eyebrow">личная карта пути</p><h1>Метод Витка</h1><p class="lead">Введи дату рождения, чтобы построить карту личности, линии пути, циклов, вызовов и предназначения.</p><div class="controls"><input type="date" id="birth"/><button id="btn">Построить карту</button></div></section>
+<section class="info"><details open><summary>Что показывает карта</summary><div class="grid"><div class="item"><b>Портрет личности</b><span>6 арканов внутренней структуры и проявления.</span></div><div class="item"><b>Линия пути</b><span>Последовательность движения по дате рождения.</span></div><div class="item"><b>Циклы и вызовы</b><span>Этапы взросления, повторы и точки роста.</span></div><div class="item"><b>Предназначение</b><span>Верхняя линия: то, что больше личности и раскрывается через неё.</span></div></div></details></section>
+<section class="chartShell" id="chartSection"><div class="chartCard"><svg viewBox="245 24 490 590" id="svg"></svg></div><div class="hint">Для сохранения зажми экран и сделай скриншот карты</div></section>
+<section class="cta"><h2>Хочешь расшифровку?</h2><p>Карта показывает структуру. Глубинный смысл раскрывается в том, как ты пройдешь свой путь.</p><a class="linkButton" href="https://t.me/mrnmkkn" class="cta-btn" target="_blank">Написать Марине</a></section><p class="fine">Метод Витка · карта по дате рождения</p>
+</div>
+<script>
+function arc22(n){ const r = n % 22; return r === 0 ? 22 : r; }
+function sumDigits(n){ return n.toString().split('').reduce((a,b)=>a+Number(b),0); }
+function reduce1(n){ let x = Math.abs(Number(n)); while (x > 9) x = sumDigits(x); return x; }
+function pad2(n){ return String(n).padStart(2,'0'); }
+function pad4(n){ return String(n).padStart(4,'0'); }
+function line(svg, x1,y1,x2,y2, cls="sep"){ svg.insertAdjacentHTML("beforeend",`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" class="${cls}"></line>`); }
+function text(svg, x,y, str, cls="num"){ svg.insertAdjacentHTML("beforeend",`<text x="${x}" y="${y}" class="${cls}">${str}</text>`); }
+function path(svg, d, cls="arc"){ svg.insertAdjacentHTML("beforeend",`<path d="${d}" class="${cls}"></path>`); }
+function circle(svg, cx,cy,r, cls="cycleCircle"){ svg.insertAdjacentHTML("beforeend",`<circle cx="${cx}" cy="${cy}" r="${r}" class="${cls}"></circle>`); }
+function rect(svg, x,y,w,h, cls="challengeSquare"){ svg.insertAdjacentHTML("beforeend",`<rect x="${x}" y="${y}" width="${w}" height="${h}" class="${cls}"></rect>`); }
+function halo(svg,cx,cy,r,cls){ svg.insertAdjacentHTML("beforeend",`<circle cx="${cx}" cy="${cy}" r="${r}" class="${cls}"></circle>`); }
+function tangentPoint(from, to, r){
+  const dx = to.x - from.x, dy = to.y - from.y;
+  const len = Math.hypot(dx, dy) || 1;
+  return { x: from.x + dx / len * r, y: from.y + dy / len * r };
+}
+function curvedConnector(svg, p1, p2, cp, r1, r2, cls="destinyLine"){
+  const start = tangentPoint(p1, cp || p2, r1);
+  const end = tangentPoint(p2, cp || p1, r2);
+  path(svg, `M ${start.x} ${start.y} Q ${cp.x} ${cp.y} ${end.x} ${end.y}`, cls);
+}
+function arcRowY(baseY, x, centerX, halfWidth, sag){
+  const u = Math.max(-1, Math.min(1, (x-centerX)/halfWidth));
+  return baseY + sag * (1 - u*u);
+}
+function qConnector(svg, p1, p2, sag, cls="sep"){
+  const mx = (p1.x+p2.x)/2;
+  const my = (p1.y+p2.y)/2 + sag;
+  path(svg, `M ${p1.x} ${p1.y} Q ${mx} ${my} ${p2.x} ${p2.y}`, cls);
+}
+function render(){
+  const svg = document.getElementById("svg");
+  svg.innerHTML = `
+<circle class="bgGlowCircle" cx="490" cy="350" r="250"/>
+    <circle class="bgGlowCircle" cx="490" cy="350" r="174"/>
+    <path class="bgVeil" d="M202 430 C310 585 650 590 778 430"/>
+    <path class="bgVeil" d="M245 190 C360 70 620 70 735 190"/>
+    <path class="vitokSpiral" d="M300 356 C286 356 278 342 286 331 C296 318 318 322 323 338 C330 361 303 383 279 369 C246 350 253 303 292 286 C342 264 405 297 413 353 C423 426 350 482 275 450 C206 421 184 329 229 261 C288 173 422 164 508 238 C574 295 601 381 573 460 C547 531 481 578 410 584 C348 590 296 572 270 542"/>
+    <path class="vitokSpiralSoft" d="M300 356 C293 355 290 348 294 343 C299 336 310 338 313 346 C318 359 302 372 288 364 C266 351 272 320 298 309 C333 295 376 318 381 356 C388 407 337 445 286 424 C238 404 223 340 254 293 C294 235 382 228 439 276 C485 315 501 374 481 427 C462 474 419 504 372 509"/>
+    <path class="vitokSpiral" d="M270 542 C316 604 432 624 546 568 C625 529 666 456 655 379 C646 314 601 256 545 225 C511 206 487 180 501 146 C515 111 559 92 613 86 C661 81 698 68 714 42"/>
+    <g class="vitokSpark"><circle cx="300" cy="356" r="1.3"/><circle cx="286" cy="331" r="1.0"/><circle cx="413" cy="353" r="1.1"/><circle cx="229" cy="261" r="1.2"/><circle cx="508" cy="238" r="1.2"/><circle cx="655" cy="379" r="1.1"/><circle cx="613" cy="86" r="1.5"/><circle cx="714" cy="42" r="1.8"/></g>`;
+  const iso = document.getElementById("birth").value;
+  if (!iso) return;
+  const dt = new Date(iso + "T12:00:00");
+  const day = dt.getDate();
+  const month = dt.getMonth()+1;
+  const year = dt.getFullYear();
+  const A_day = arc22(day);
+  const A_month = arc22(month);
+  const A_year = arc22(year);
+  const B_left = arc22(A_day + A_month);
+  const B_right = arc22(A_month + A_year);
+  const C_top = arc22(B_left + B_right);
+  const centerX = 490;
+  // Геометрия верхней карты выстроена относительно даты:
+  // 1-й аркан — над днём, 2-й — над месяцем, 3-й — по центру года.
+  const portraitStep = 51;
+  const portraitDateStart = centerX - portraitStep * 3.5;
+  const xA1 = portraitDateStart + portraitStep * .5;
+  const xA2 = portraitDateStart + portraitStep * 2.5;
+  const xA3 = portraitDateStart + portraitStep * 5.5;
+  const portraitCenter = (xA1 + xA3) / 2;
+  const xB1 = (xA1 + xA2) / 2;
+  const xB2 = (xA2 + xA3) / 2;
+  const yA0 = 286, yB0 = 230, yC = 174;
+  const yA1 = arcRowY(yA0, xA1, portraitCenter, 132, 10);
+  const yA2 = arcRowY(yA0, xA2, portraitCenter, 132, 22);
+  const yA3 = arcRowY(yA0, xA3, portraitCenter, 132, 10);
+  const yB1 = arcRowY(yB0, xB1, portraitCenter, 96, 10);
+  const yB2 = arcRowY(yB0, xB2, portraitCenter, 96, 10);
+  path(svg, `M ${xA1+23} ${yA1-16} Q ${xB1} ${yA0-52} ${xA2-23} ${yA2-16}`, "arc");
+  path(svg, `M ${xA2+23} ${yA2-16} Q ${xB2} ${yA0-52} ${xA3-23} ${yA3-16}`, "arc");
+  path(svg, `M ${xB1+21} ${yB1-17} Q ${portraitCenter} ${yB0-46} ${xB2-21} ${yB2-17}`, "arc soft");
+  [[xA1,yA1,23],[xA2,yA2,23],[xA3,yA3,23],[xB1,yB1,21],[xB2,yB2,21],[portraitCenter,yC,24]].forEach(([x,y,r]) => halo(svg,x,y,r,"portraitHalo"));
+  text(svg, xA1, yA1, A_day, "num"); text(svg, xA2, yA2, A_month, "num"); text(svg, xA3, yA3, A_year, "num");
+  text(svg, xB1, yB1, B_left, "num"); text(svg, xB2, yB2, B_right, "num"); text(svg, portraitCenter, yC, C_top, "num");
+  const digitsForDestiny = `${pad2(day)}${pad2(month)}${pad4(year)}`.split("").map(Number);
+  const destinyBase = reduce1(digitsForDestiny.reduce((a,b)=>a+b,0));
+  const destinyYear = arc22(destinyBase + A_year);
+  const destinyMiddle = arc22(destinyYear + B_right);
+  const destinyTop = arc22(destinyMiddle + C_top);
+  const destiny = [destinyBase, destinyYear, destinyMiddle, destinyTop];
+  // Линия предназначения чуть отделена от портрета и выстроена почти по прямой
+  // между нижней точкой (сумма всей даты) и верхней точкой предназначения.
+  const destinyBottom = {x:xA3+94, y:yA3};
+  const destinyTopPoint = {x:490, y:yC-64};
+  function pointOnDestinyLine(targetY){
+    const t = (targetY - destinyBottom.y) / (destinyTopPoint.y - destinyBottom.y);
+    return {
+      x: destinyBottom.x + (destinyTopPoint.x - destinyBottom.x) * t,
+      y: targetY
+    };
+  }
+  const destinyPoints = [
+    destinyBottom,
+    pointOnDestinyLine(yB2),
+    pointOnDestinyLine(yC),
+    destinyTopPoint
+  ];
+  const destinyRadii=[18,18,18,24];
+  for(let i=0;i<destinyPoints.length-1;i++){
+    const a = destinyPoints[i], b = destinyPoints[i+1];
+    const start = tangentPoint(a,b,destinyRadii[i]);
+    const end = tangentPoint(b,a,destinyRadii[i+1]);
+    line(svg,start.x,start.y,end.x,end.y,"destinyLine");
+  }
+  for(let i=0;i<destiny.length;i++){const p=destinyPoints[i]; const r=i===3?24:18; halo(svg,p.x,p.y,r+8,"destinyHalo"); circle(svg,p.x,p.y,r,"destinyCircle"); text(svg,p.x,p.y,destiny[i],i===3?"num":"num small");}
+  const dd=pad2(day), mm=pad2(month), yyyy=pad4(year);
+  const digitsStr=`${dd}${mm}${yyyy}`; const digits=digitsStr.split("").map(Number);
+  const life=[digits[0]]; for(let i=1;i<digits.length;i++){let next=life[i-1]+digits[i]; if(next>22) next-=22; life.push(next);}
+  const step=51; const xStart=centerX-step*3.5; const yDateBase=336; const yLifeBase=386;
+  const dateChars=[dd[0],dd[1],".",mm[0],mm[1],".",yyyy[0],yyyy[1],yyyy[2],yyyy[3]];
+  const dateX=[xStart,xStart+step,xStart+step*1.5,xStart+step*2,xStart+step*3,xStart+step*3.5,xStart+step*4,xStart+step*5,xStart+step*6,xStart+step*7];
+  const dateY=dateX.map(x=>arcRowY(yDateBase,x,centerX,220,28));
+  const lifeY=[...Array(8)].map((_,i)=>arcRowY(yLifeBase,xStart+i*step,centerX,210,34));
+  // Рамка даты возвращена из версии deeper_real: мягкая U-плашка, повторяющая общий изгиб даты.
+  const dateFrameLift = 8; // слегка поднимаем рамку, чтобы дата была визуально по центру
+  path(svg, `M ${xStart-30} ${arcRowY(yDateBase,xStart-30,centerX,220,28)-24-dateFrameLift} Q ${centerX} ${yDateBase+40-dateFrameLift} ${xStart+step*7+30} ${arcRowY(yDateBase,xStart+step*7+30,centerX,220,28)-24-dateFrameLift} L ${xStart+step*7+30} ${arcRowY(yDateBase,xStart+step*7+30,centerX,220,28)+24-dateFrameLift} Q ${centerX} ${yDateBase+88-dateFrameLift} ${xStart-30} ${arcRowY(yDateBase,xStart-30,centerX,220,28)+24-dateFrameLift} Z`, "dateChip");
+  for(let i=0;i<dateChars.length;i++) text(svg,dateX[i],dateY[i],dateChars[i],dateChars[i]==='.'?"dateDot":"dateDigit");
+  const dateIndex=[0,1,3,4,6,7,8,9];
+  for(let i=0;i<life.length;i++){const x=xStart+i*step, y=lifeY[i]; line(svg,x,dateY[dateIndex[i]]+25,x,y-18,"pathLine"); halo(svg,x,y,17,"portraitHalo"); text(svg,x,y,life[i],"num small");}
+  const S=reduce1(digits.reduce((a,b)=>a+b,0)); const ages=[36-S,36-S+9,36-S+18];
+  let ageIndex=0; for(let i=2;i<life.length;i+=2){const x=xStart+(i-.5)*step; const y=arcRowY(yLifeBase+47,x,centerX,210,22); text(svg,x,y,ages[ageIndex],"ageText"); ageIndex++;}
+  const cycles=[reduce1(day+month),reduce1(day+year),0,reduce1(month+year)]; cycles[2]=reduce1(cycles[0]+cycles[1]);
+  const d1=reduce1(day), m1=reduce1(month), y1=reduce1(year);
+  const challenges=[reduce1(Math.abs(d1-m1)),reduce1(Math.abs(d1-y1)),0,reduce1(Math.abs(m1-y1))]; challenges[2]=reduce1(Math.abs(challenges[0]-challenges[1]));
+  const cycleX=[centerX-168,centerX-56,centerX+56,centerX+168]; const cycleY=cycleX.map(x=>arcRowY(482,x,centerX,210,34)); const chalY=cycleX.map(x=>arcRowY(548,x,centerX,210,26));
+  for(let i=0;i<4;i++){circle(svg,cycleX[i],cycleY[i],22,"cycleCircle"); text(svg,cycleX[i],cycleY[i],cycles[i],"num small"); rect(svg,cycleX[i]-22,chalY[i]-22,44,44,"challengeSquare"); text(svg,cycleX[i],chalY[i],challenges[i],"num small");}
+}
+document.getElementById("btn").addEventListener("click", render);
+document.getElementById("birth").addEventListener("change", render);
+
+
+const originalRender = render;
+render = function(){ originalRender(); const iso = document.getElementById('birth').value; if(iso) document.getElementById('chartSection').scrollIntoView({behavior:'smooth', block:'start'}); };
+document.getElementById('btn').onclick = render;
+document.getElementById('birth').onchange = render;
+
+</script></body></html>
+
+<style>
+@supports (padding:max(0px)) {
+  body{
+    padding-top:max(12px, env(safe-area-inset-top));
+    padding-bottom:max(28px, env(safe-area-inset-bottom));
+  }
+}
+@media(max-width:430px){
+  input[type="date"]{
+    width:100% !important;
+    max-width:100% !important;
+    min-width:0 !important;
+    display:block;
+    padding:16px 14px !important;
+    font-size:16px !important;
+    border-radius:18px !important;
+    overflow:hidden;
+  }
+  .controls{
+    width:100%;
+    overflow:hidden;
+  }
+  .hero,.info,.chartShell,.cta{
+    margin-left:0;
+    margin-right:0;
+  }
+}
+</style>
