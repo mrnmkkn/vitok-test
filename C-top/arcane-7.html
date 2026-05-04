@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>7 Аркан — пристрастия души</title>
+  <style>
+    :root{
+      --dark:#25262b;
+      --raspberry:#e92b69;
+      --coral:#f86b7d;
+      --cream:#f4d7b8;
+      --lavender:#b2abec;
+      --violet:#9656ce;
+      --ink:#fff8f3;
+      --muted:rgba(255,248,243,.76);
+      --soft:rgba(255,248,243,.16);
+      --glass:rgba(255,255,255,.075);
+    }
+
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth;background:#000}
+    body{
+      margin:0;
+      min-height:100vh;
+      color:var(--ink);
+      font-family:"Calibri Light", Calibri, Arial, sans-serif;
+      background:
+        radial-gradient(circle at 18% 6%, rgba(233,43,105,.46) 0 8%, transparent 28%),
+        radial-gradient(circle at 84% 12%, rgba(178,171,236,.40) 0 10%, transparent 32%),
+        radial-gradient(circle at 50% 48%, rgba(248,107,125,.18) 0 18%, transparent 56%),
+        radial-gradient(circle at 20% 88%, rgba(150,86,206,.35) 0 12%, transparent 40%),
+        linear-gradient(145deg,#25262b 0%,#302c3d 44%,#4e315f 100%);
+      padding:18px 12px 36px;
+    }
+    body:before{
+      content:"";
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      background:
+        radial-gradient(circle at 50% -10%, rgba(244,215,184,.18), transparent 32%),
+        linear-gradient(180deg, rgba(255,255,255,.04), transparent 26%, rgba(0,0,0,.10));
+      mix-blend-mode:screen;
+      opacity:.72;
+    }
+
+    .page{
+      width:min(100%,480px);
+      margin:0 auto;
+      position:relative;
+      z-index:1;
+    }
+
+    .glass{
+      position:relative;
+      overflow:hidden;
+      border-radius:30px;
+      background:
+        linear-gradient(145deg,rgba(255,255,255,.13),rgba(255,255,255,.045) 48%,rgba(178,171,236,.055)),
+        rgba(255,255,255,.035);
+      backdrop-filter:blur(18px) saturate(1.15);
+      -webkit-backdrop-filter:blur(18px) saturate(1.15);
+      border:1px solid rgba(255,248,243,.18);
+      box-shadow:0 24px 70px rgba(0,0,0,.18), inset 0 1px 0 rgba(255,255,255,.16), inset 0 -1px 0 rgba(178,171,236,.08);
+    }
+    .glass:before{
+      content:"";
+      position:absolute;
+      inset:1px;
+      border-radius:29px;
+      pointer-events:none;
+      background:linear-gradient(135deg,rgba(255,255,255,.16),transparent 34%,rgba(178,171,236,.07) 78%,transparent);
+      opacity:.52;
+    }
+
+    .hero{padding:28px 20px 22px;margin-bottom:14px}
+    .eyebrow{
+      margin:0 0 12px;
+      color:rgba(244,215,184,.86);
+      font-family:Calibri,Arial,sans-serif;
+      font-size:11px;
+      letter-spacing:.30em;
+      text-transform:uppercase;
+      font-weight:700;
+    }
+    h1{
+      font-family:"Calibri Light",Calibri,Arial,sans-serif;
+      margin:0 0 10px;
+      font-size:44px;
+      font-weight:300;
+      line-height:.95;
+      letter-spacing:.01em;
+      color:#fff8f3;
+      text-shadow:0 14px 40px rgba(233,43,105,.22);
+    }
+    .lead{
+      margin:0;
+      color:var(--muted);
+      line-height:1.45;
+      font-size:16px;
+    }
+
+    .arcaneBadge{
+      width:74px;
+      height:74px;
+      border-radius:50%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      margin:0 0 18px;
+      color:#fff8f3;
+      font-family:Calibri,Arial,sans-serif;
+      font-size:34px;
+      font-weight:700;
+      background:rgba(248,107,125,.065);
+      border:1px solid rgba(248,107,125,.52);
+      box-shadow:0 0 26px rgba(248,107,125,.16), inset 0 1px 0 rgba(255,255,255,.18);
+    }
+
+    .section{padding:18px;margin-bottom:14px}
+    h2{
+      margin:0 0 12px;
+      color:#fff8f3;
+      font-family:"Calibri Light",Calibri,Arial,sans-serif;
+      font-size:28px;
+      font-weight:300;
+      line-height:1.05;
+    }
+    p{
+      margin:0 0 12px;
+      color:var(--muted);
+      font-size:16px;
+      line-height:1.5;
+    }
+    p:last-child{margin-bottom:0}
+    .accent{
+      color:#fff8f3;
+      font-size:18px;
+      line-height:1.45;
+    }
+    .quote{
+      padding:18px;
+      border-radius:24px;
+      background:rgba(255,255,255,.045);
+      border:1px solid rgba(244,215,184,.18);
+      color:#fff8f3;
+      font-size:20px;
+      line-height:1.35;
+      text-shadow:0 10px 28px rgba(233,43,105,.14);
+    }
+
+    .list{
+      display:grid;
+      gap:9px;
+      margin:0;
+      padding:0;
+      list-style:none;
+    }
+    .list li{
+      position:relative;
+      padding:11px 13px 11px 34px;
+      border-radius:18px;
+      background:rgba(255,255,255,.045);
+      border:1px solid rgba(255,248,243,.105);
+      color:var(--muted);
+      font-size:15px;
+      line-height:1.35;
+    }
+    .list li:before{
+      content:"";
+      position:absolute;
+      left:14px;
+      top:17px;
+      width:7px;
+      height:7px;
+      border-radius:50%;
+      background:linear-gradient(135deg,var(--raspberry),var(--cream));
+      box-shadow:0 0 10px rgba(233,43,105,.32);
+    }
+
+    .twoCols{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .miniCard{
+      padding:15px;
+      border-radius:24px;
+      background:rgba(255,255,255,.045);
+      border:1px solid rgba(255,248,243,.105);
+    }
+    .miniCard h3{
+      margin:0 0 10px;
+      color:#fff8f3;
+      font-family:Calibri,Arial,sans-serif;
+      font-size:15px;
+      font-weight:700;
+    }
+
+    .linkButton{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      width:100%;
+      min-height:54px;
+      border:none;
+      border-radius:20px;
+      padding:14px 18px;
+      font-family:Calibri,Arial,sans-serif;
+      font-size:17px;
+      font-weight:700;
+      text-decoration:none;
+      cursor:pointer;
+      color:#fff8f3;
+      background:linear-gradient(135deg,rgba(233,43,105,.96),rgba(248,107,125,.88) 48%,rgba(150,86,206,.84));
+      box-shadow:0 18px 42px rgba(233,43,105,.25), inset 0 1px 0 rgba(255,255,255,.26);
+    }
+    .fine{
+      text-align:center;
+      color:rgba(255,248,243,.50);
+      font-size:12px;
+      line-height:1.4;
+      padding:4px 10px 0;
+    }
+
+    @media(max-width:430px){
+      body{padding:12px 8px 28px}
+      .page{width:100%}
+      .hero{padding:24px 16px 18px}
+      h1{font-size:40px}
+      .section{padding:16px}
+      .twoCols{grid-template-columns:1fr}
+    }
+    @supports (padding:max(0px)) {
+      body{
+        padding-top:max(12px, env(safe-area-inset-top));
+        padding-bottom:max(28px, env(safe-area-inset-bottom));
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="hero glass">
+      <div class="arcaneBadge">7</div>
+      <p class="eyebrow">вершина треугольника личности</p>
+      <h1>7 Аркан</h1>
+      <p class="lead">То, к чему стремится душа, что наполняет, что по-настоящему манит и оживляет.</p>
+    </section>
+
+    <section class="section glass">
+      <p class="accent">7 Аркан в этой позиции — это душа, которая стремится к движению, победе, силе воли, развитию через преодоление и ощущению собственного курса.</p>
+      <p>Это не только про амбиции или соревнование. Здесь 7 раскрывается как энергия человека, которому важно чувствовать, что он движется вперед, растет, берет высоты и способен управлять направлением своей жизни.</p>
+      <p>Такому человеку важно чувствовать: я иду, я развиваюсь, я управляю своей дорогой и могу побеждать обстоятельства.</p>
+    </section>
+
+    <section class="section glass">
+      <h2>Что действительно наполняет</h2>
+      <div class="twoCols">
+        <div class="miniCard">
+          <h3>Движение и прогресс</h3>
+          <ul class="list">
+            <li>я продвигаюсь</li>
+            <li>есть цель впереди</li>
+            <li>жизнь развивается</li>
+            <li>каждый этап ведет к следующему</li>
+            <li>я не стою на месте</li>
+          </ul>
+        </div>
+        <div class="miniCard">
+          <h3>Победа и достижения</h3>
+          <ul class="list">
+            <li>результаты</li>
+            <li>покоренные цели</li>
+            <li>личные рекорды</li>
+            <li>чувство «я смог»</li>
+            <li>рост статуса или уровня жизни</li>
+          </ul>
+        </div>
+        <div class="miniCard">
+          <h3>Сила воли и управление собой</h3>
+          <ul class="list">
+            <li>дисциплина</li>
+            <li>контроль импульсов</li>
+            <li>умение держать курс</li>
+            <li>стратегические решения</li>
+            <li>способность не сдаваться</li>
+          </ul>
+        </div>
+        <div class="miniCard">
+          <h3>Скорость, дорога, горизонт</h3>
+          <ul class="list">
+            <li>поездки</li>
+            <li>автомобили</li>
+            <li>путешествия</li>
+            <li>карьерный рост</li>
+            <li>проекты с динамикой</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="section glass">
+      <h2>Ценности души 7 Аркана</h2>
+      <ul class="list">
+        <li>свобода движения</li>
+        <li>победа</li>
+        <li>развитие</li>
+        <li>сила воли</li>
+        <li>целеустремленность</li>
+        <li>независимость</li>
+        <li>результативность</li>
+        <li>личный курс</li>
+        <li>уважение к себе через действия</li>
+      </ul>
+    </section>
+
+    <section class="section glass">
+      <div class="twoCols">
+        <div class="miniCard">
+          <h3>Когда человек на своем пути</h3>
+          <ul class="list">
+            <li>драйв</li>
+            <li>уверенность</li>
+            <li>внутренний мотор</li>
+            <li>азарт к жизни</li>
+            <li>желание действовать</li>
+            <li>удовлетворение от достижений</li>
+            <li>ощущение силы</li>
+            <li>ясность направления</li>
+          </ul>
+        </div>
+        <div class="miniCard">
+          <h3>Когда не на своем пути</h3>
+          <ul class="list">
+            <li>раздражение от медлительности мира</li>
+            <li>агрессия</li>
+            <li>борьба ради борьбы</li>
+            <li>нетерпение</li>
+            <li>трудоголизм</li>
+            <li>выгорание</li>
+            <li>постоянное недовольство результатами</li>
+            <li>ощущение, что жизнь буксует</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="section glass">
+      <h2>Что важно понять 7 Аркану</h2>
+      <p>Твоя душа хочет не бесконечной гонки. Она хочет живого движения и силы реализовывать себя.</p>
+      <p>Не обязательно воевать со всеми, чтобы победить. Не обязательно мчаться без остановки, чтобы идти вперед.</p>
+      <p class="accent">Иногда зрелая победа — это спокойный курс.</p>
+    </section>
+
+    <section class="section glass">
+      <h2>Что может особенно радовать и оживлять</h2>
+      <ul class="list">
+        <li>достижение целей</li>
+        <li>спорт</li>
+        <li>путешествия</li>
+        <li>вождение</li>
+        <li>карьерный рост</li>
+        <li>сложные задачи с результатом</li>
+        <li>личные челленджи</li>
+        <li>активный ритм жизни</li>
+        <li>предпринимательство</li>
+        <li>всё, где есть развитие и движение</li>
+      </ul>
+    </section>
+
+    <section class="section glass">
+      <h2>Ключевая фраза</h2>
+      <div class="quote">Я пришла не стоять в ожидании.<br>Я пришла двигаться, побеждать и вести свою жизнь вперед.</div>
+    </section>
+
+    <section class="section glass">
+      <a class="linkButton" href="index.html">Вернуться к карте</a>
+    </section>
+
+    <p class="fine">Метод Витка · 7 Аркан на вершине треугольника личности</p>
+  </main>
+</body>
+</html>
