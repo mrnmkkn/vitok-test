@@ -400,12 +400,47 @@ svg{
   .grid{grid-template-columns:1fr}
   svg{height:700px}
 }
+
+
+/* Модальное окно трактовки аркана */
+.arcaneTopHit{cursor:pointer;pointer-events:auto;outline:none}
+.arcaneTopHit .portraitHalo{transition:stroke .22s ease, fill .22s ease, filter .22s ease;}
+.arcaneTopHit .num{transition:fill .22s ease, filter .22s ease;}
+.arcaneTopHit:hover .portraitHalo,.arcaneTopHit:focus .portraitHalo{fill:rgba(248,107,125,.10);stroke:rgba(248,107,125,.70);filter:drop-shadow(0 0 12px rgba(248,107,125,.20));}
+.arcaneTopHit:hover .num,.arcaneTopHit:focus .num{fill:#fff;filter:drop-shadow(0 0 10px rgba(248,107,125,.34));}
+.arcaneOverlay{position:fixed;inset:0;z-index:50;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(0,0,0,.48);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);}
+.arcaneOverlay.isOpen{display:flex}
+.arcaneModal{width:min(100%,460px);max-height:min(86vh,720px);overflow:hidden;border-radius:30px;background:linear-gradient(145deg,rgba(255,255,255,.15),rgba(255,255,255,.055) 48%,rgba(178,171,236,.07)),radial-gradient(circle at 20% 0%,rgba(233,43,105,.28),transparent 38%),radial-gradient(circle at 90% 18%,rgba(178,171,236,.22),transparent 42%),rgba(37,38,43,.86);border:1px solid rgba(255,248,243,.22);box-shadow:0 28px 90px rgba(0,0,0,.46), inset 0 1px 0 rgba(255,255,255,.16);color:var(--ink);}
+.arcaneModalHeader{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;padding:22px 20px 14px;border-bottom:1px solid rgba(255,248,243,.12);}
+.arcaneModalTitle{margin:0;font-family:"Calibri Light",Calibri,Arial,sans-serif;font-size:30px;line-height:1.05;font-weight:300;color:#fff8f3;}
+.arcaneModalSubtitle{margin:7px 0 0;color:rgba(244,215,184,.78);font-size:13px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;}
+.arcaneClose{flex:0 0 auto;width:42px;min-height:42px;border-radius:16px;padding:0;font-size:25px;line-height:1;background:rgba(255,255,255,.08);border:1px solid rgba(255,248,243,.16);box-shadow:inset 0 1px 0 rgba(255,255,255,.12);}
+.arcaneModalBody{padding:20px;max-height:calc(min(86vh,720px) - 94px);overflow:auto;}
+.arcaneEmptyState{min-height:240px;display:flex;align-items:center;justify-content:center;text-align:center;border-radius:24px;border:1px dashed rgba(255,248,243,.20);background:rgba(255,255,255,.035);color:rgba(255,248,243,.62);line-height:1.45;}
+.arcaneSourceLink{display:none;margin-top:16px;color:#fff8f3;text-decoration:none;font-weight:700;text-align:center;padding:13px 16px;border-radius:18px;background:rgba(255,255,255,.07);border:1px solid rgba(255,248,243,.16);}
+.arcaneSourceLink.isVisible{display:block}body.modalOpen{overflow:hidden}
+@media(max-width:430px){.arcaneOverlay{padding:10px}.arcaneModal{border-radius:26px;max-height:88vh}.arcaneModalTitle{font-size:27px}.arcaneModalHeader,.arcaneModalBody{padding-left:16px;padding-right:16px}}
 </style></head><body>
 <div class="page">
 <section class="hero"><p class="eyebrow">личная карта пути</p><h1>Метод Витка</h1><p class="lead">Введи дату рождения, чтобы построить карту личности, линии пути, циклов, вызовов и предназначения.</p><div class="controls"><input type="date" id="birth"/><button id="btn">Построить карту</button></div></section>
 <section class="info"><details open><summary>Что показывает карта</summary><div class="grid"><div class="item"><b>Портрет личности</b><span>6 арканов внутренней структуры и проявления.</span></div><div class="item"><b>Линия пути</b><span>Последовательность движения по дате рождения.</span></div><div class="item"><b>Циклы и вызовы</b><span>Этапы взросления, повторы и точки роста.</span></div><div class="item"><b>Предназначение</b><span>Верхняя линия: то, что больше личности и раскрывается через неё.</span></div></div></details></section>
 <section class="chartShell" id="chartSection"><div class="chartCard"><svg viewBox="245 24 490 590" id="svg"></svg></div><div class="hint">Для сохранения зажми экран и сделай скриншот карты</div></section>
 <section class="cta"><h2>Хочешь расшифровку?</h2><p>Карта показывает структуру. Глубинный смысл раскрывается в том, как ты пройдешь свой путь.</p><a class="linkButton" href="https://t.me/mrnmkkn" class="cta-btn" target="_blank">Написать Марине</a></section><p class="fine">Метод Витка · карта по дате рождения</p>
+</div>
+
+<div class="arcaneOverlay" id="arcaneOverlay" aria-hidden="true">
+  <div class="arcaneModal" role="dialog" aria-modal="true" aria-labelledby="arcaneModalTitle">
+    <div class="arcaneModalHeader">
+      <div>
+        <h2 class="arcaneModalTitle" id="arcaneModalTitle">Аркан</h2>
+        <p class="arcaneModalSubtitle">вершина треугольника личности</p>
+      </div>
+      <button class="arcaneClose" id="arcaneClose" type="button" aria-label="Закрыть окно">×</button>
+    </div>
+    <div class="arcaneModalBody" id="arcaneModalBody">
+      <div class="arcaneEmptyState">Здесь появится трактовка аркана.</div>
+    </div>
+  </div>
 </div>
 <script>
 function arc22(n){ const r = n % 22; return r === 0 ? 22 : r; }
@@ -415,6 +450,26 @@ function pad2(n){ return String(n).padStart(2,'0'); }
 function pad4(n){ return String(n).padStart(4,'0'); }
 function line(svg, x1,y1,x2,y2, cls="sep"){ svg.insertAdjacentHTML("beforeend",`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" class="${cls}"></line>`); }
 function text(svg, x,y, str, cls="num"){ svg.insertAdjacentHTML("beforeend",`<text x="${x}" y="${y}" class="${cls}">${str}</text>`); }
+function openArcaneModal(arcaneNumber){
+  const overlay = document.getElementById("arcaneOverlay");
+  const title = document.getElementById("arcaneModalTitle");
+  const body = document.getElementById("arcaneModalBody");
+  const fileName = `C-top/arcane-${arcaneNumber}.html`;
+  title.textContent = `${arcaneNumber} аркан`;
+  body.innerHTML = `<div class="arcaneEmptyState">Здесь появится трактовка ${arcaneNumber} аркана.</div><a class="arcaneSourceLink isVisible" href="${fileName}" target="_blank" rel="noopener">Открыть отдельную страницу аркана</a>`;
+  overlay.classList.add("isOpen");
+  overlay.setAttribute("aria-hidden","false");
+  document.body.classList.add("modalOpen");
+}
+function closeArcaneModal(){
+  const overlay = document.getElementById("arcaneOverlay");
+  overlay.classList.remove("isOpen");
+  overlay.setAttribute("aria-hidden","true");
+  document.body.classList.remove("modalOpen");
+}
+function topArcane(svg, x, y, r, value){
+  svg.insertAdjacentHTML("beforeend",`<g class="arcaneTopHit" tabindex="0" role="button" aria-label="Открыть трактовку ${value} аркана" data-arcane="${value}"><circle cx="${x}" cy="${y}" r="${r}" class="portraitHalo"></circle><text x="${x}" y="${y}" class="num">${value}</text></g>`);
+}
 function path(svg, d, cls="arc"){ svg.insertAdjacentHTML("beforeend",`<path d="${d}" class="${cls}"></path>`); }
 function circle(svg, cx,cy,r, cls="cycleCircle"){ svg.insertAdjacentHTML("beforeend",`<circle cx="${cx}" cy="${cy}" r="${r}" class="${cls}"></circle>`); }
 function rect(svg, x,y,w,h, cls="challengeSquare"){ svg.insertAdjacentHTML("beforeend",`<rect x="${x}" y="${y}" width="${w}" height="${h}" class="${cls}"></rect>`); }
@@ -481,9 +536,9 @@ function render(){
   path(svg, `M ${xA1+23} ${yA1-16} Q ${xB1} ${yA0-52} ${xA2-23} ${yA2-16}`, "arc");
   path(svg, `M ${xA2+23} ${yA2-16} Q ${xB2} ${yA0-52} ${xA3-23} ${yA3-16}`, "arc");
   path(svg, `M ${xB1+21} ${yB1-17} Q ${portraitCenter} ${yB0-46} ${xB2-21} ${yB2-17}`, "arc soft");
-  [[xA1,yA1,23],[xA2,yA2,23],[xA3,yA3,23],[xB1,yB1,21],[xB2,yB2,21],[portraitCenter,yC,24]].forEach(([x,y,r]) => halo(svg,x,y,r,"portraitHalo"));
+  [[xA1,yA1,23],[xA2,yA2,23],[xA3,yA3,23],[xB1,yB1,21],[xB2,yB2,21]].forEach(([x,y,r]) => halo(svg,x,y,r,"portraitHalo"));
   text(svg, xA1, yA1, A_day, "num"); text(svg, xA2, yA2, A_month, "num"); text(svg, xA3, yA3, A_year, "num");
-  text(svg, xB1, yB1, B_left, "num"); text(svg, xB2, yB2, B_right, "num"); text(svg, portraitCenter, yC, C_top, "num");
+  text(svg, xB1, yB1, B_left, "num"); text(svg, xB2, yB2, B_right, "num"); topArcane(svg, portraitCenter, yC, 24, C_top);
   const digitsForDestiny = `${pad2(day)}${pad2(month)}${pad4(year)}`.split("").map(Number);
   const destinyBase = reduce1(digitsForDestiny.reduce((a,b)=>a+b,0));
   const destinyYear = arc22(destinyBase + A_year);
@@ -546,6 +601,22 @@ render = function(){ originalRender(); const iso = document.getElementById('birt
 document.getElementById('btn').onclick = render;
 document.getElementById('birth').onchange = render;
 
+
+
+document.getElementById("svg").addEventListener("click", function(e){
+  const target = e.target.closest(".arcaneTopHit");
+  if(target) openArcaneModal(target.dataset.arcane);
+});
+document.getElementById("svg").addEventListener("keydown", function(e){
+  const target = e.target.closest(".arcaneTopHit");
+  if(target && (e.key === "Enter" || e.key === " ")){
+    e.preventDefault();
+    openArcaneModal(target.dataset.arcane);
+  }
+});
+document.getElementById("arcaneClose").addEventListener("click", closeArcaneModal);
+document.getElementById("arcaneOverlay").addEventListener("click", function(e){ if(e.target === this) closeArcaneModal(); });
+document.addEventListener("keydown", function(e){ if(e.key === "Escape") closeArcaneModal(); });
 </script></body></html>
 
 <style>
