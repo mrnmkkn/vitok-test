@@ -219,10 +219,6 @@
       line-height:1.4;
       padding:4px 10px 0;
     }
-    body.embedded{padding-top:0;}
-    body.embedded:before{display:none;}
-    body.embedded .page{width:100%;}
-    body.embedded .hero{margin-top:0;border-top-left-radius:0;border-top-right-radius:0;}
 
     @media(max-width:430px){
       body{padding:12px 8px 28px}
@@ -237,6 +233,26 @@
         padding-top:max(12px, env(safe-area-inset-top));
         padding-bottom:max(28px, env(safe-area-inset-bottom));
       }
+    }
+
+    /* Режим внутри модального окна: сохраняем цветной фон и стеклянные карточки */
+    body.embedded{
+      padding:12px !important;
+      background:
+        radial-gradient(circle at 18% 6%, rgba(233,43,105,.46) 0 8%, transparent 28%),
+        radial-gradient(circle at 84% 12%, rgba(178,171,236,.40) 0 10%, transparent 32%),
+        radial-gradient(circle at 50% 48%, rgba(248,107,125,.18) 0 18%, transparent 56%),
+        radial-gradient(circle at 20% 88%, rgba(150,86,206,.35) 0 12%, transparent 40%),
+        linear-gradient(145deg,#25262b 0%,#302c3d 44%,#4e315f 100%) !important;
+    }
+    body.embedded:before{display:block !important;}
+    body.embedded .page{width:100%;}
+    body.embedded .hero{margin-top:0;}
+    body.embedded .glass{
+      background:
+        linear-gradient(145deg,rgba(255,255,255,.13),rgba(255,255,255,.045) 48%,rgba(178,171,236,.055)),
+        rgba(255,255,255,.035) !important;
+      border-color:rgba(255,248,243,.18) !important;
     }
   </style>
 </head>
@@ -374,10 +390,6 @@
       <h2>Ключевая фраза</h2>
       <div class="quote">Я пришла не стоять в ожидании.<br>Я пришла двигаться, побеждать и вести свою жизнь вперед.</div>
     </section>
-
-
-
-    <p class="fine">Метод Витка · 7 Аркан на вершине треугольника личности</p>
   </main>
 <script>
     if (window.self !== window.top || new URLSearchParams(window.location.search).get('view') === 'modal') {
