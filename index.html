@@ -1,4 +1,38 @@
-<!DOCTYPE html><html lang="ru"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/><title>Метод Витка — карта пути</title><style>
+<!DOCTYPE html><html lang="ru"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/><title>Метод Витка — нумерологический калькулятор карты пути по дате рождения</title>
+<meta name="description" content="Бесплатный нумерологический калькулятор Метод Витка: построй карту личности, линию пути, жизненные циклы, вызовы и предназначение по дате рождения."/>
+<meta name="keywords" content="нумерологический калькулятор, расчет по дате рождения, карта личности по дате рождения, предназначение по дате рождения, арканы по дате рождения, Метод Витка, карта пути"/>
+<meta name="robots" content="index, follow, max-image-preview:large"/>
+<link rel="canonical" href="https://mrnmkkn.github.io/vitok/"/>
+<meta property="og:type" content="website"/>
+<meta property="og:locale" content="ru_RU"/>
+<meta property="og:title" content="Метод Витка — нумерологическая карта по дате рождения"/>
+<meta property="og:description" content="Построй личную карту пути: портрет личности, линию пути, циклы, вызовы и предназначение по дате рождения."/>
+<meta property="og:url" content="https://mrnmkkn.github.io/vitok/"/>
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Метод Витка — нумерологическая карта по дате рождения"/>
+<meta name="twitter:description" content="Бесплатный калькулятор: карта личности, линия пути, циклы, вызовы и предназначение по дате рождения."/>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Метод Витка",
+  "url": "https://mrnmkkn.github.io/vitok/",
+  "applicationCategory": "LifestyleApplication",
+  "operatingSystem": "Any",
+  "inLanguage": "ru",
+  "description": "Нумерологический калькулятор по дате рождения: карта личности, линия пути, жизненные циклы, вызовы и предназначение.",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "RUB"
+  },
+  "creator": {
+    "@type": "Person",
+    "name": "Марина Миккина",
+    "url": "https://t.me/mrnmkkn"
+  }
+}
+</script><style>
 :root{
   --dark:#25262b;
   --raspberry:#e92b69;
@@ -102,6 +136,19 @@ h1{
   letter-spacing:.01em;
   color:#fff8f3;
   text-shadow:0 14px 40px rgba(233,43,105,.22);
+}
+
+.h1Seo{
+  display:block;
+  margin-top:8px;
+  max-width:360px;
+  font-family:Calibri,Arial,sans-serif;
+  font-size:17px;
+  line-height:1.25;
+  font-weight:700;
+  letter-spacing:.02em;
+  color:rgba(244,215,184,.88);
+  text-shadow:none;
 }
 
 .lead{
@@ -284,6 +331,34 @@ svg{
 
 .cta p{margin:0 0 14px}
 
+.seoText{
+  position:relative;
+  overflow:hidden;
+  border-radius:30px;
+  padding:20px;
+  margin-bottom:12px;
+  background:
+    linear-gradient(145deg,rgba(255,255,255,.10),rgba(255,255,255,.035) 52%,rgba(178,171,236,.045)),
+    rgba(255,255,255,.025);
+  border:1px solid rgba(255,248,243,.13);
+  box-shadow:0 18px 54px rgba(0,0,0,.13), inset 0 1px 0 rgba(255,255,255,.12);
+}
+.seoText h2{
+  font-family:"Calibri Light",Calibri,Arial,sans-serif;
+  font-size:26px;
+  line-height:1.08;
+  font-weight:300;
+  margin:0 0 10px;
+  color:#fff8f3;
+}
+.seoText p{
+  margin:0 0 10px;
+  color:rgba(255,248,243,.68);
+  font-size:14px;
+  line-height:1.48;
+}
+.seoText p:last-child{margin-bottom:0}
+
 .fine{
   text-align:center;
   color:rgba(255,248,243,.50);
@@ -425,10 +500,16 @@ body.modalOpen{overflow:hidden}
 @media(max-width:430px){.arcaneOverlay{padding:10px}.arcaneModal{border-radius:26px;max-height:88vh}.arcaneModalHeader{padding:12px}.arcaneOpenSeparate{font-size:13px;padding:10px 12px}.arcaneClose{width:42px}}
 </style></head><body>
 <div class="page">
-<section class="hero"><p class="eyebrow">личная карта пути</p><h1>Метод Витка</h1><p class="lead">Введи дату рождения, чтобы построить карту личности, линии пути, циклов, вызовов и предназначения.</p><div class="controls"><input type="date" id="birth"/><button id="btn">Построить карту</button></div></section>
+<section class="hero"><p class="eyebrow">личная карта пути</p><h1>Метод Витка <span class="h1Seo">нумерологическая карта по дате рождения</span></h1><p class="lead">Введи дату рождения, чтобы построить карту личности, линии пути, циклов, вызовов и предназначения.</p><div class="controls"><input type="date" id="birth" aria-label="Дата рождения"/><button id="btn">Построить карту</button></div></section>
 <section class="info"><details open><summary>Что показывает карта</summary><div class="grid"><div class="item"><b>Портрет личности</b><span>6 арканов внутренней структуры и проявления.</span></div><div class="item"><b>Линия пути</b><span>Последовательность движения по дате рождения.</span></div><div class="item"><b>Циклы и вызовы</b><span>Этапы взросления, повторы и точки роста.</span></div><div class="item"><b>Предназначение</b><span>Верхняя линия: то, что больше личности и раскрывается через неё.</span></div></div></details></section>
 <section class="chartShell" id="chartSection"><div class="chartCard"><svg viewBox="245 24 490 590" id="svg"></svg></div><div class="hint">Для сохранения зажми экран и сделай скриншот карты</div></section>
-<section class="cta"><h2>Хочешь расшифровку?</h2><p>Карта показывает структуру. Глубинный смысл раскрывается в том, как ты пройдешь свой путь.</p><a class="linkButton" href="https://t.me/mrnmkkn" class="cta-btn" target="_blank">Написать Марине</a></section><p class="fine">Метод Витка · карта по дате рождения</p>
+<section class="cta"><h2>Хочешь расшифровку?</h2><p>Карта показывает структуру. Глубинный смысл раскрывается в том, как ты пройдешь свой путь.</p><a class="linkButton cta-btn" href="https://t.me/mrnmkkn" target="_blank" rel="noopener">Написать Марине</a></section>
+<section class="seoText" aria-label="Описание метода и калькулятора">
+  <h2>Нумерологический расчет по дате рождения</h2>
+  <p>Метод Витка — авторский нумерологический калькулятор, который строит личную карту пути по дате рождения: портрет личности, линию пути, жизненные циклы, вызовы и линию предназначения.</p>
+  <p>Расчет помогает увидеть не готовый приговор, а внутреннюю структуру движения: сильные качества, повторяющиеся темы, точки роста и энергии, через которые человек раскрывает свой путь.</p>
+  <p>Карта опирается на арканы, циклы и последовательность даты рождения, чтобы бережно показать, где есть ясность, ресурс и следующий виток развития.</p>
+</section><p class="fine">Метод Витка · карта по дате рождения · нумерология · арканы · предназначение</p>
 </div>
 
 <div class="arcaneOverlay" id="arcaneOverlay" aria-hidden="true">
